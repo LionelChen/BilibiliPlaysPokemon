@@ -1,5 +1,4 @@
 import socket
-
 from pyboy import PyBoy, WindowEvent
 pyboy = PyBoy('ROMs/yellow.gb',sound=True)
 

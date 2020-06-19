@@ -1,6 +1,3 @@
-from pyboy import PyBoy
-#pyboy = PyBoy('ROMs/yellow.gb')
-
 import asyncio
 import os
 import socket
