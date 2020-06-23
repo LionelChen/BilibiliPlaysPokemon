@@ -1,8 +1,59 @@
 import socket
 from pyboy import PyBoy, WindowEvent
-pyboy = PyBoy('ROMs/yellow.gb',sound=True)
+pyboy = PyBoy('ROMs/yellow.gb',sound=False)
+keyMap = {"up":[WindowEvent.PRESS_ARROW_UP,WindowEvent.RELEASE_ARROW_UP],
+          "down":[WindowEvent.PRESS_ARROW_DOWN, WindowEvent.RELEASE_ARROW_DOWN],
+          "left":[WindowEvent.PRESS_ARROW_LEFT, WindowEvent.RELEASE_ARROW_LEFT],
+          "right":[WindowEvent.PRESS_ARROW_RIGHT, WindowEvent.RELEASE_ARROW_RIGHT],
+          "a":[WindowEvent.PRESS_BUTTON_A, WindowEvent.RELEASE_BUTTON_A],
+          "b":[WindowEvent.PRESS_BUTTON_B, WindowEvent.RELEASE_BUTTON_B]
+            }
 
+def parseCmd(cmdStr, pyboy):
+    #Single CMD:
+    if len(cmdStr) == 1:
+        if cmdStr == b'a':
+            pyboy.send_input(WindowEvent.PRESS_BUTTON_A)
+            pyboy.tick()
+            pyboy.send_input(WindowEvent.RELEASE_BUTTON_A)
+            pyboy.tick()
+        elif cmdStr == b'b':
+            pyboy.send_input(WindowEvent.PRESS_BUTTON_B)
+            pyboy.tick()
+            pyboy.send_input(WindowEvent.RELEASE_BUTTON_B)
+            pyboy.tick()
+        elif cmdStr == b'u':
+            pyboy.send_input(WindowEvent.PRESS_ARROW_UP)
+            pyboy.tick()
+            pyboy.send_input(WindowEvent.RELEASE_ARROW_UP)
+            pyboy.tick()
+        elif cmdStr == b'd':
+            pyboy.send_input(WindowEvent.PRESS_ARROW_DOWN)
+            pyboy.tick()
+            pyboy.send_input(WindowEvent.RELEASE_ARROW_DOWN)
+            pyboy.tick()
+        elif cmdStr == b'r':
+            pyboy.send_input(WindowEvent.PRESS_ARROW_RIGHT)
+            pyboy.tick()
+            pyboy.send_input(WindowEvent.RELEASE_ARROW_RIGHT)
+            pyboy.tick()
+        elif cmdStr == b'l':
+            pyboy.send_input(WindowEvent.PRESS_ARROW_LEFT)
+            pyboy.tick()
+            pyboy.send_input(WindowEvent.RELEASE_ARROW_LEFT)
+            pyboy.tick()
 
+def sendKey(key):
+    try:
+        press, release = keyMap[key][0], keyMap[key][1]
+        pyboy.send_input(press)
+        pyboy.tick()
+        pyboy.tick()
+        pyboy.tick()
+        pyboy.send_input(release)
+        pyboy.tick()
+    except KeyError:
+        print("Invalid Key on keymap")
 
 # Create a TCP/IP socket
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -31,61 +82,35 @@ while True:
             while True:
                 data = connection.recv(16)
                 if data == b'a':
-                    pyboy.send_input(WindowEvent.PRESS_BUTTON_A)
-                    pyboy.tick()
-                    pyboy.send_input(WindowEvent.RELEASE_BUTTON_A)
-                    pyboy.tick()
+                    sendKey("a")
                     print('received {!r}'.format(data))
                     data = None
                 elif data == b'b':
-                    pyboy.send_input(WindowEvent.PRESS_BUTTON_B)
-                    pyboy.tick()
-                    pyboy.send_input(WindowEvent.RELEASE_BUTTON_B)
-                    pyboy.tick()
+                    sendKey("b")
                     print('received {!r}'.format(data))
                     data = None
                 elif data == b'u' or data == b'up':
-                    pyboy.send_input(WindowEvent.PRESS_ARROW_UP)
-                    pyboy.tick()
-                    pyboy.send_input(WindowEvent.RELEASE_ARROW_UP)
-                    pyboy.tick()
+                    sendKey("up")
                     print('received {!r}'.format(data))
                     data = None
                 elif data == b'd' or data == b'down':
-                    pyboy.send_input(WindowEvent.PRESS_ARROW_DOWN)
-                    pyboy.tick()
-                    pyboy.send_input(WindowEvent.RELEASE_ARROW_DOWN)
-                    pyboy.tick()
+                    sendKey("down")
                     print('received {!r}'.format(data))
                     data = None
                 elif data == b'r' or data == b'right':
-                    pyboy.send_input(WindowEvent.PRESS_ARROW_RIGHT)
-                    pyboy.tick()
-                    pyboy.send_input(WindowEvent.RELEASE_ARROW_RIGHT)
-                    pyboy.tick()
+                    sendKey("right")
                     print('received {!r}'.format(data))
                     data = None
                 elif data == b'l' or data == b'left':
-                    pyboy.send_input(WindowEvent.PRESS_ARROW_LEFT)
-                    pyboy.tick()
-                    pyboy.send_input(WindowEvent.RELEASE_ARROW_LEFT)
-                    pyboy.tick()
+                    sendKey("left")
                     print('received {!r}'.format(data))
                     data = None
+
                 else:
                     break;
-                #if data:
-                #    print('sending data back to the client')
-                #    connection.sendall(data)
-                #else:
-                #    print('no data from', client_address)
-                #    break
+                data = None
+
 
             connection.close()
         except BlockingIOError:
             pass
-
-        #finally:
-            #Clean up the connection
-            #print("Closing current connection")
-            #connection.close()
