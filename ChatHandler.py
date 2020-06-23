@@ -18,7 +18,8 @@ class MyBLiveClient(blivedm.BLiveClient):
 
     async def _on_receive_danmaku(self, danmaku: blivedm.DanmakuMessage):
         #print(f'{danmaku.uname}：{danmaku.msg}')
-        if danmaku.msg in ["a", "b", "up", "down", "left", "right", "u", "d", "l", "r"]:
+        valid_cmd = ["a", "b", "u", "d", "l", "r"]
+        if danmaku.msg in valid_cmd:
             # Create a TCP/IP socket
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
@@ -34,6 +35,25 @@ class MyBLiveClient(blivedm.BLiveClient):
             finally:
                 #print('closing socket')
                 sock.close()
+        elif danmaku.msg[0] in valid_cmd:
+            for each in danmaku.msg:
+                if each not in valid_cmd:
+                    return;
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+
+            # Connect the socket to the port where the server is listening
+            server_address = ('localhost', 50007)
+            # print('connecting to {} port {}'.format(*server_address))
+            sock.connect(server_address)
+
+            try:
+                message = str.encode(danmaku.msg)
+                # print('sending {!r}'.format(message))
+                sock.sendall(message)
+            finally:
+                # print('closing socket')
+                sock.close()
+
 
     async def _on_receive_gift(self, gift: blivedm.GiftMessage):
         print(f'{gift.uname} 赠送{gift.gift_name}x{gift.num} （{gift.coin_type}币x{gift.total_coin}）')

@@ -1,12 +1,12 @@
 import socket
 from pyboy import PyBoy, WindowEvent
 pyboy = PyBoy('ROMs/yellow.gb',sound=False)
-keyMap = {"up":[WindowEvent.PRESS_ARROW_UP,WindowEvent.RELEASE_ARROW_UP],
-          "down":[WindowEvent.PRESS_ARROW_DOWN, WindowEvent.RELEASE_ARROW_DOWN],
-          "left":[WindowEvent.PRESS_ARROW_LEFT, WindowEvent.RELEASE_ARROW_LEFT],
-          "right":[WindowEvent.PRESS_ARROW_RIGHT, WindowEvent.RELEASE_ARROW_RIGHT],
-          "a":[WindowEvent.PRESS_BUTTON_A, WindowEvent.RELEASE_BUTTON_A],
-          "b":[WindowEvent.PRESS_BUTTON_B, WindowEvent.RELEASE_BUTTON_B]
+keyMap = {"up":[WindowEvent.PRESS_ARROW_UP,WindowEvent.RELEASE_ARROW_UP],117:[WindowEvent.PRESS_ARROW_UP,WindowEvent.RELEASE_ARROW_UP],
+          "down":[WindowEvent.PRESS_ARROW_DOWN, WindowEvent.RELEASE_ARROW_DOWN],100:[WindowEvent.PRESS_ARROW_DOWN, WindowEvent.RELEASE_ARROW_DOWN],
+          "left":[WindowEvent.PRESS_ARROW_LEFT, WindowEvent.RELEASE_ARROW_LEFT],108:[WindowEvent.PRESS_ARROW_LEFT, WindowEvent.RELEASE_ARROW_LEFT],
+          "right":[WindowEvent.PRESS_ARROW_RIGHT, WindowEvent.RELEASE_ARROW_RIGHT],114:[WindowEvent.PRESS_ARROW_RIGHT, WindowEvent.RELEASE_ARROW_RIGHT],
+          "a":[WindowEvent.PRESS_BUTTON_A, WindowEvent.RELEASE_BUTTON_A],97:[WindowEvent.PRESS_BUTTON_A, WindowEvent.RELEASE_BUTTON_A],
+          "b":[WindowEvent.PRESS_BUTTON_B, WindowEvent.RELEASE_BUTTON_B],98:[WindowEvent.PRESS_BUTTON_B, WindowEvent.RELEASE_BUTTON_B]
             }
 
 def parseCmd(cmdStr, pyboy):
@@ -104,6 +104,10 @@ while True:
                 elif data == b'l' or data == b'left':
                     sendKey("left")
                     print('received {!r}'.format(data))
+                    data = None
+                elif len(data) >= 1:
+                    for each in data:
+                        sendKey(each)
                     data = None
 
                 else:
